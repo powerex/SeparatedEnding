@@ -11,11 +11,10 @@ public class ZeroMachine extends Machine {
     }
 
     public boolean isOver() {
-        return (color == Color.WHITE &&
-                token != null &&
+        return (token != null &&
                 token.getColor() == Color.WHITE &&
                 token.getValue() == 0 &&
-                baseCounter.get() == 0
+                cluster.sumBaseCounters() == 0
         );
     }
 
@@ -26,20 +25,14 @@ public class ZeroMachine extends Machine {
             token.setColor(Color.BLACK);
         token.steps.incrementAndGet();
         token.changeValue(getBaseCounter());
-        System.out.println("Zero send token:" + token);
         cluster.getMachines().get(cluster.getMachines().size()-1).receiveToken(token);
     }
 
     @Override
     public void receiveToken(Token token) {
-        System.out.println(token);
-        /*this.token = token;
-        if (isOver())
-            System.out.println(" ! ~~~~ Over ~~~~ !");
-        else
-            System.out.println(" ! ~~~~ NOT Over ~~~~ !");
+        this.token = token;
 
-        System.err.println("0 : Send token " + token.getValue() + " " + token.getColor() + " step - " + token.steps.get());
-        */
+        if (isOver() && getCurrentState() instanceof PassiveMachine)
+            cluster.setActive(false);
     }
 }

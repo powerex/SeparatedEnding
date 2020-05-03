@@ -22,7 +22,6 @@ public class ActiveMachine implements MachineState {
     public void sendMessage(Message message) {
         machine.increaseBaseCounter();
         machine.getCluster().getChannel().push(message);
-        System.out.println(machine.getId() + ": Sum base count:::::: -> " + machine.getCluster().getMachines().stream().mapToInt(m -> m.getBaseCounter()).sum());
     }
 
     @Override

@@ -12,7 +12,7 @@ public class Machine implements MachineState, Runnable {
     private static int ID = 0;
     private MachineState currentState;
     protected Model cluster;
-    private int id;
+    private final int id;
 
     protected Color color;
     protected Token token;
@@ -20,13 +20,12 @@ public class Machine implements MachineState, Runnable {
 
     private final double partToSend = 0.7;
     private final double helpChance = 0.08;
-    private final double tokenChance = 0.75;
+    private final double power;
 
     private long workingTime;
     private long startTimeWorking;
     private int countOn;
 
-    private double power;
     private double taskSize;
 
 
@@ -101,15 +100,8 @@ public class Machine implements MachineState, Runnable {
                 '}';
     }
 
-    public void startScanning() {
-
-    }
-
     @Override
     public void run() {
-
-        System.out.println("!-------- Machine " + id + " started with task: " + taskSize);
-
         while (taskSize > 0) {
             taskSize -= power;
             if (Math.random() < helpChance) {
@@ -118,7 +110,6 @@ public class Machine implements MachineState, Runnable {
                 } catch (UnreachableStateException e) {
                     e.printStackTrace();
                 }
-//                cluster.getChannel().push(generateMessage());
             }
 
             try {
@@ -130,11 +121,11 @@ public class Machine implements MachineState, Runnable {
 
         if (taskSize <= 0) {
             setCurrentState(new PassiveMachine(this));
-            if (!(this instanceof ZeroMachine)) sendToken();
-        }
+            if (this instanceof ZeroMachine && ((ZeroMachine)this).isOver())
+                cluster.setActive(false);
 
+        }
         workingTime += (System.currentTimeMillis() - startTimeWorking);
-        System.out.println("===== Machine " + id + " DONE!" + "\t\t\t: " + taskSize);
     }
 
     public void increaseCountOn() {
@@ -145,18 +136,12 @@ public class Machine implements MachineState, Runnable {
         return workingTime;
     }
 
-    public int getCountOn() {
-        return countOn;
-    }
-
     public String getStatisticInfo() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id)
-                .append(": countsOn - ")
-                .append(countOn)
-                .append(" Working time: ")
-                .append(workingTime);
-        return sb.toString();
+        return id +
+                ": countsOn - " +
+                countOn +
+                " Working time: " +
+                workingTime;
     }
 
     public synchronized void increaseBaseCounter() {

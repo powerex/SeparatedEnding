@@ -46,7 +46,5 @@ public class Channel implements Runnable {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("Channel CLOSE");
     }
 }

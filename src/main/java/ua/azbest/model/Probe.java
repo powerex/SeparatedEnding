@@ -1,7 +1,5 @@
 package ua.azbest.model;
 
-import ua.azbest.machine.ZeroMachine;
-
 public class Probe implements Runnable {
 
     private Model model;
@@ -12,12 +10,13 @@ public class Probe implements Runnable {
 
     @Override
     public void run() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (model.isActive()) {
+            model.getZeroMachine().sendToken();
+            try {
+                Thread.sleep(1300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        model.getZeroMachine().sendToken();
-        //model.getMachines().stream().skip(1).forEach(m -> m.sendToken());
     }
 }

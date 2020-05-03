@@ -35,18 +35,13 @@ public class PassiveMachine implements MachineState  {
 
     @Override
     public void receiveToken(Token token) {
-        System.err.println(" -> -> -> forward token to " + machine.getCluster().getMachines().get(machine.getId()-1));
         sendToken();
     }
 
     @Override
     public void sendToken() {
         machine.getToken().steps.incrementAndGet();
-
-//        System.out.println("Sum base count:::::: -> " + machine.getCluster().getMachines().stream().mapToInt(m -> m.getBaseCounter()).sum());
-
         machine.token.changeValue(machine.getBaseCounter());
-        System.err.println("Send token, value: " + machine.getToken() + " --------------------------- From Machine: " + machine.getId());
         machine.getCluster().getMachines().get(machine.getId()-1).receiveToken(machine.token);
         machine.setToken(null);
     }
