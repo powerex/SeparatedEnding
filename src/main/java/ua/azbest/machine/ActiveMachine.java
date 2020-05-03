@@ -13,23 +13,25 @@ public class ActiveMachine implements MachineState {
 
     @Override
     public void receiveMessage(Message message) {
+        machine.decreaseBaseCounter();
         message.setSourceId(machine.getId());
-        machine.getCluster().getChannel().push(message);
+        sendMessage(message);
     }
 
     @Override
     public void sendMessage(Message message) {
         machine.increaseBaseCounter();
         machine.getCluster().getChannel().push(message);
+        System.out.println(machine.getId() + ": Sum base count:::::: -> " + machine.getCluster().getMachines().stream().mapToInt(m -> m.getBaseCounter()).sum());
     }
 
     @Override
     public void receiveToken(Token token) {
-
+        // do nothing, just overwrite prev token
     }
 
     @Override
-    public void sendToken(Token token) {
-
+    public void sendToken() throws UnreachableStateException {
+        throw new UnreachableStateException("invoke sendToken() on ActiveMachine state");
     }
 }

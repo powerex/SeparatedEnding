@@ -5,16 +5,18 @@ import ua.azbest.comunication.Message;
 import ua.azbest.comunication.Token;
 import ua.azbest.model.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Machine implements MachineState, Runnable {
 
     private static int ID = 0;
     private MachineState currentState;
-    private Model cluster;
+    protected Model cluster;
     private int id;
 
     protected Color color;
     protected Token token;
-    protected int baseCounter;
+    protected AtomicInteger baseCounter;
 
     private final double partToSend = 0.7;
     private final double helpChance = 0.08;
@@ -36,7 +38,7 @@ public class Machine implements MachineState, Runnable {
         taskSize = 0.0;
         countOn = 0;
         workingTime = 0;
-        baseCounter = 0;
+        baseCounter = new AtomicInteger(0);
         color = Color.WHITE;
     }
 
@@ -64,7 +66,11 @@ public class Machine implements MachineState, Runnable {
 
     @Override
     public void sendMessage(Message message) {
-        currentState.sendMessage(generateMessage());
+        try {
+            currentState.sendMessage(generateMessage());
+        } catch (UnreachableStateException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void setTaskSize(double taskSize) {
@@ -91,6 +97,7 @@ public class Machine implements MachineState, Runnable {
                 "id=" + id +
                 ", power=" + power +
                 ", taskSize=" + taskSize +
+                ", token=" + token +
                 '}';
     }
 
@@ -106,7 +113,12 @@ public class Machine implements MachineState, Runnable {
         while (taskSize > 0) {
             taskSize -= power;
             if (Math.random() < helpChance) {
-                cluster.getChannel().push(generateMessage());
+                try {
+                    currentState.sendMessage(generateMessage());
+                } catch (UnreachableStateException e) {
+                    e.printStackTrace();
+                }
+//                cluster.getChannel().push(generateMessage());
             }
 
             try {
@@ -118,6 +130,7 @@ public class Machine implements MachineState, Runnable {
 
         if (taskSize <= 0) {
             setCurrentState(new PassiveMachine(this));
+            if (!(this instanceof ZeroMachine)) sendToken();
         }
 
         workingTime += (System.currentTimeMillis() - startTimeWorking);
@@ -139,33 +152,50 @@ public class Machine implements MachineState, Runnable {
     public String getStatisticInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append(id)
-          .append(": countsOn - ")
-          .append(countOn)
-          .append(" Working time: ")
-          .append(workingTime);
+                .append(": countsOn - ")
+                .append(countOn)
+                .append(" Working time: ")
+                .append(workingTime);
         return sb.toString();
     }
 
-    public void increaseBaseCounter() {
-        baseCounter++;
+    public synchronized void increaseBaseCounter() {
+        baseCounter.incrementAndGet();
     }
 
-    public void decreaseBaseCounter() {
-        baseCounter--;
+    public synchronized void decreaseBaseCounter() {
+        baseCounter.decrementAndGet();
     }
 
-    public int getBaseCounter() {
-        return baseCounter;
+    public synchronized int getBaseCounter() {
+        return baseCounter.get();
     }
 
     @Override
-    public void sendToken(Token token) {
+    public synchronized void sendToken() {
         color = Color.WHITE;
+        if (token != null) {
+            token.steps.incrementAndGet();
+            try {
+                currentState.sendToken();
+            } catch (UnreachableStateException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void receiveToken(Token token) {
         this.token = token;
         currentState.receiveToken(token);
+        //System.err.println(id + " : Receive token " + token.getValue() + " " + token.getColor() + " step - " + token.steps.get());
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 }

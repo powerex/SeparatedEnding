@@ -1,5 +1,6 @@
 package ua.azbest.comunication;
 
+import org.w3c.dom.ls.LSOutput;
 import ua.azbest.model.Model;
 
 import java.util.Random;
@@ -10,7 +11,7 @@ public class Channel implements Runnable {
 
     private BlockingQueue<Message> queue;
     private Model model;
-    private final long DELAY = 100;
+    private final long DELAY = 200;
     private final Random random = new Random();
 
     public Channel(Model model) {

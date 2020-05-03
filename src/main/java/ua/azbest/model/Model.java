@@ -4,6 +4,7 @@ import ua.azbest.comunication.Channel;
 import ua.azbest.comunication.Message;
 import ua.azbest.machine.ActiveMachine;
 import ua.azbest.machine.Machine;
+import ua.azbest.machine.MachineState;
 import ua.azbest.machine.ZeroMachine;
 
 import java.util.ArrayList;
@@ -18,26 +19,35 @@ public class Model implements Runnable {
     private final int clusterSize;
     private Channel channel;
     private final List<Machine> machines;
-    private final double TASK_SIZE = 1000;
+    private final double TASK_SIZE = 200;
     private boolean active = false;
+    private Probe probe;
+
+    //private Thread pr;
 
     public Model(int clusterSize) {
         Random random = new Random();
         this.clusterSize = clusterSize;
         ZeroMachine zeroMachine = new ZeroMachine(random.nextDouble(), this);
 //        machines = Stream.generate(() -> new Machine(this)).limit(clusterSize).collect(Collectors.toList());
-        machines = Stream.generate(() -> new Machine(random.nextDouble(), this)).limit(clusterSize).collect(toCollection(ArrayList::new));
+        machines = Stream.generate(() -> new Machine(random.nextDouble(), this)).limit(clusterSize-1).collect(toCollection(ArrayList::new));
         machines.add(0, zeroMachine);
+
         active = true;
         channel = new Channel(this);
         machines.get(0).receiveMessage(new Message(0, TASK_SIZE));
-        Thread th = new Thread(channel);
+        probe = new Probe(this);
+        Thread ch = new Thread(this.channel);
+        //pr = new Thread(this.probe);
         try {
-            th.join();
+            ch.join();
+            //pr.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        th.start();
+        ch.start();
+        getZeroMachine().sendToken();
+        //pr.start();
     }
 
     public double getTaskLeft() {
@@ -72,13 +82,20 @@ public class Model implements Runnable {
             System.out.println("\t\t\t\t Left: " + getTaskLeft());
 
             //machines.stream().filter(m -> m.getCurrentState() instanceof ActiveMachine).mapToInt(Machine::getId).forEach(System.out::println);
-
+            //    if (pr.isAlive()) System.out.println("Probe is alive");
+            //    else System.out.println("Probe is over");
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+
+        System.out.println("\n\n Machine base Counter ");
+        System.out.println("Sum base counters " + machines.stream().mapToInt(m -> m.getBaseCounter()).sum());
+        machines.stream().mapToInt(m -> m.getBaseCounter()).forEach(System.out::println);
+        System.out.println("End Machine base Counter ");
 
         System.out.println(
                 "Model STOP!"
@@ -95,5 +112,9 @@ public class Model implements Runnable {
 
     public boolean isActive() {
         return active;
+    }
+
+    public Machine getZeroMachine() {
+        return machines.get(0);
     }
 }
