@@ -174,6 +174,7 @@ public class Machine implements MachineState, Runnable {
         this.token = token;
         currentState.receiveToken(token);
         //System.err.println(id + " : Receive token " + token.getValue() + " " + token.getColor() + " step - " + token.steps.get());
+        //getCluster().noticeTokenSend(id);
     }
 
     public Token getToken() {

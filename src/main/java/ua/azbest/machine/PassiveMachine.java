@@ -9,6 +9,8 @@ public class PassiveMachine implements MachineState  {
 
     public PassiveMachine(Machine machine) {
         this.machine = machine;
+        if (machine.getCluster() != null)
+            machine.getCluster().noticeMachineSetPassive(machine.getId());
     }
 
     @Override

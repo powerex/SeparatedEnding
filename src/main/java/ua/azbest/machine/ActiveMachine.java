@@ -9,6 +9,7 @@ public class ActiveMachine implements MachineState {
 
     public ActiveMachine(Machine machine) {
         this.machine = machine;
+        machine.getCluster().noticeMachineSetActive(machine.getId());
     }
 
     @Override

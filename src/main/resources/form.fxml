@@ -12,7 +12,7 @@
    <children>
       <VBox layoutX="690.0" layoutY="14.0" prefHeight="600.0" prefWidth="190.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
-            <Button minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Почати моделювання">
+            <Button fx:id="startModelingButton" onAction="#startModeling" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Почати моделювання">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
@@ -65,6 +65,6 @@
             </TextField>
          </children>
       </VBox>
-      <Canvas height="600.0" layoutX="14.0" layoutY="10.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="10.0" />
+      <Canvas fx:id="canvas" height="600.0" layoutX="14.0" layoutY="10.0" width="600.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>

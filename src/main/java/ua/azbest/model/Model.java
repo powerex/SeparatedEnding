@@ -18,7 +18,7 @@ public class Model implements Runnable {
 
     private final int clusterSize;
     private final Channel channel;
-    private final List<Machine> machines;
+    protected final List<Machine> machines;
     private final double TASK_SIZE = 200;
     private boolean active = false;
 
@@ -30,10 +30,12 @@ public class Model implements Runnable {
         ZeroMachine zeroMachine = new ZeroMachine(random.nextDouble(), this);
         machines = Stream.generate(() -> new Machine(random.nextDouble(), this)).limit(clusterSize-1).collect(toCollection(ArrayList::new));
         machines.add(0, zeroMachine);
-
-        active = true;
         channel = new Channel(this);
+    }
+
+    public void startModeling() {
         machines.get(0).receiveMessage(new Message(0, TASK_SIZE));
+        active = true;
         Probe probe = new Probe(this);
         Thread ch = new Thread(this.channel);
         pr = new Thread(probe);
@@ -74,17 +76,18 @@ public class Model implements Runnable {
 
     @Override
     public void run() {
+
+        startModeling();
+
         long startTime = System.currentTimeMillis();
         while (active) {
-            System.out.println("\t\t\t\t Left: " + getTaskLeft());
-
+            //System.err.println("\t\t\t\t Left: " + getTaskLeft());
             try {
-                sleep(3000);
+                sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
 
         System.out.println("\n\n Machine base Counter ");
         System.out.println("Sum base counters " + machines.stream().mapToInt(Machine::getBaseCounter).sum());
@@ -117,4 +120,13 @@ public class Model implements Runnable {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public int getClusterSize() {
+        return clusterSize;
+    }
+
+    public void noticeMachineSetActive(int i) {}
+    public void noticeMachineSetPassive(int i) {}
+    public void noticeTokenSend(int i) {}
+
 }
