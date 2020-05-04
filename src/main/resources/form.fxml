@@ -96,8 +96,8 @@
                     <columns>
                         <TableColumn fx:id="columnId" prefWidth="30.0" text="ID"/>
                         <TableColumn fx:id="columnOn" prefWidth="30.0" text="On"/>
-                        <TableColumn fx:id="columnTime" prefWidth="60.0" text="Time"/>
-                        <TableColumn fx:id="columnPercents" prefWidth="65.0" text="\%"/>
+                        <TableColumn fx:id="columnTime" prefWidth="55.0" text="Time"/>
+                        <TableColumn fx:id="columnPercents" prefWidth="60.0" text="\%"/>
                     </columns>
                 </TableView>
             </children>

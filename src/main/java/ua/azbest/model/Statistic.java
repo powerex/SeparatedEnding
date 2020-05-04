@@ -5,9 +5,9 @@ public class Statistic {
     private int id;
     private int on;
     private long time;
-    private double percents;
+    private String percents;
 
-    public Statistic(int id, int on, long time, double percents) {
+    public Statistic(int id, int on, long time, String percents) {
         this.id = id;
         this.on = on;
         this.time = time;
@@ -26,7 +26,7 @@ public class Statistic {
         return time;
     }
 
-    public double getPercents() {
+    public String getPercents() {
         return percents;
     }
 }

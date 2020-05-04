@@ -152,7 +152,7 @@ public class Machine implements MachineState, Runnable {
     }
 
     public Statistic getStatistic() {
-        return new Statistic(id, countOn, workingTime, (double) workingTime / getCluster().getWorkTime() * 100);
+        return new Statistic(id, countOn, workingTime, String.format("%2.2f",(double) workingTime / getCluster().getWorkTime() * 100)+"%");
     }
 
     public synchronized void increaseBaseCounter() {

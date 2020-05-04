@@ -70,6 +70,7 @@ public class FormController {
         columnTime.setCellValueFactory(new PropertyValueFactory<Statistic, String>("time"));
         columnTime.setStyle( "-fx-alignment: CENTER-RIGHT;");
         columnPercents.setCellValueFactory(new PropertyValueFactory<Statistic, String>("percents"));
+        columnPercents.setStyle( "-fx-alignment: CENTER-RIGHT;");
     }
 
 
