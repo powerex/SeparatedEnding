@@ -151,6 +151,10 @@ public class Machine implements MachineState, Runnable {
                 ";\t" + String.format("%02.2f", (double) workingTime / getCluster().getWorkTime() * 100) + "%";
     }
 
+    public Statistic getStatistic() {
+        return new Statistic(id, countOn, workingTime, (double) workingTime / getCluster().getWorkTime() * 100);
+    }
+
     public synchronized void increaseBaseCounter() {
         baseCounter.incrementAndGet();
     }

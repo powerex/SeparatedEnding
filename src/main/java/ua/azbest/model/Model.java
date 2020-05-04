@@ -21,7 +21,7 @@ public class Model implements Runnable {
     private final int clusterSize;
     private final Channel channel;
     protected final List<Machine> machines;
-    private final double TASK_SIZE = 200;
+    private final double TASK_SIZE = 50;
     private boolean active = false;
     private AtomicBoolean tokenSend = new AtomicBoolean(false);
     protected PrintStream printStream;
@@ -155,5 +155,9 @@ public class Model implements Runnable {
         if (workTime!=null)
             return workTime;
         return 1;
+    }
+
+    public List<Statistic> getStatistics() {
+        return machines.stream().map(m -> m.getStatistic()).collect(toCollection(ArrayList::new));
     }
 }
