@@ -47,4 +47,8 @@ public class Channel implements Runnable {
             }
         }
     }
+
+    public BlockingQueue<Message> getQueue() {
+        return queue;
+    }
 }

@@ -7,9 +7,9 @@ import static java.lang.StrictMath.toIntExact;
 
 public class Message implements Delayed {
 
-    private long startTime;
+    private final long startTime;
     private long sourceId;
-    private double taskSize;
+    private final double taskSize;
     private final long DELAY = 150;
 
     public Message(long sourceId, double taskSize) {
@@ -45,4 +45,6 @@ public class Message implements Delayed {
                 ", taskSize=" + taskSize +
                 '}';
     }
+
+
 }

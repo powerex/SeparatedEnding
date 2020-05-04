@@ -25,6 +25,7 @@ public class Model implements Runnable {
     private boolean active = false;
     private AtomicBoolean tokenSend = new AtomicBoolean(false);
     protected PrintStream printStream;
+    private Long workTime = null;
 
     private Thread pr;
 
@@ -60,7 +61,8 @@ public class Model implements Runnable {
      *         value not includes task in delayed messages in channel
      */
     public double getTaskLeft() {
-        return machines.stream().filter(m -> m.getCurrentState() instanceof ActiveMachine).mapToDouble(Machine::getTaskSize).sum();
+        return machines.stream().filter(m -> m.getCurrentState() instanceof ActiveMachine).mapToDouble(Machine::getTaskSize).sum() +
+               channel.getQueue().stream().mapToDouble(Message::getTaskSize).sum();
     }
 
     public long getActiveMachineCount() {
@@ -94,15 +96,18 @@ public class Model implements Runnable {
             }
         }
 
+        /*
         System.out.println("\n\n Machine base Counter ");
         System.out.println("Sum base counters " + machines.stream().mapToInt(Machine::getBaseCounter).sum());
         machines.stream().mapToInt(Machine::getBaseCounter).forEach(System.out::println);
         System.out.println("End Machine base Counter ");
+         */
 
-        long diff = System.currentTimeMillis() - startTime;
-        System.out.println("Whole time calculated: " + diff);
-        machines.stream().map(Machine::getStatisticInfo).forEach(System.out::println);
-        machines.stream().mapToDouble((Machine::getWorkingTime)).map(d -> d/diff*100).forEach(System.out::println);
+
+        workTime = System.currentTimeMillis() - startTime;
+        printStream.println("Загальний час роботи: " + workTime);
+        machines.stream().map(Machine::getStatisticInfo).forEach(printStream::println);
+        //machines.stream().mapToDouble((Machine::getWorkingTime)).map(d -> d/workTime*100).forEach(System.out::println);
 
         getZeroMachine().sendToken();
     }
@@ -144,5 +149,11 @@ public class Model implements Runnable {
 
     public synchronized void setTokenSend(boolean tokenSend) {
         this.tokenSend.lazySet(tokenSend);
+    }
+
+    public long getWorkTime() {
+        if (workTime!=null)
+            return workTime;
+        return 1;
     }
 }

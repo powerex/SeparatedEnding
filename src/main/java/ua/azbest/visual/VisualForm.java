@@ -12,6 +12,7 @@ public class VisualForm extends Application {
         FXMLLoader loader = new FXMLLoader();
         Parent root = loader.load(getClass().getResource("../../../form.fxml"));
         stage.setTitle("Separate Ending");
+        stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();
     }

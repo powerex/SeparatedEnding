@@ -79,14 +79,14 @@ public class ModelRender {
                 gc.setFill(Color.YELLOW);
                 break;
             case BLACK:
-                gc.setFill(Color.DARKGRAY);
+                gc.setFill(Color.BLACK);
                 break;
         }
 
-        gc.fillOval(shiftX, shiftY, W / 4, W / 4);
+        gc.fillOval(shiftX - W/6, shiftY - W/6, W / 3, W / 3);
 
-        gc.setStroke(Color.BLUEVIOLET);
-        gc.strokeText(String.valueOf(token.getId()) + '(' + token.steps.incrementAndGet() + ')', shiftX, shiftY);
+//        gc.setStroke(Color.BLUEVIOLET);
+//        gc.strokeText(String.valueOf(token.getId()) + '(' + token.steps.incrementAndGet() + ')', shiftX, shiftY);
     }
 
 }

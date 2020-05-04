@@ -123,7 +123,7 @@ public class Machine implements MachineState, Runnable {
             setCurrentState(new PassiveMachine(this));
             //System.out.println("Machine " + id + "DONE");
             if (this instanceof ZeroMachine) {
-                if (((ZeroMachine)this).isOver())  {
+                if (((ZeroMachine) this).isOver()) {
                     cluster.setActive(false);
                 }
                 cluster.setTokenSend(false);
@@ -145,11 +145,10 @@ public class Machine implements MachineState, Runnable {
     }
 
     public String getStatisticInfo() {
-        return id +
-                ": countsOn - " +
-                countOn +
-                " Working time: " +
-                workingTime;
+        return "ID: " + String.format("%02d", id) +
+                ";\tВключень: " + String.format("%02d", countOn) +
+                ";\t Час роботи: " + String.format("%06d", workingTime) +
+                ";\t" + String.format("%02.2f", (double) workingTime / getCluster().getWorkTime() * 100) + "%";
     }
 
     public synchronized void increaseBaseCounter() {
