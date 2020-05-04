@@ -121,8 +121,16 @@ public class Machine implements MachineState, Runnable {
 
         if (taskSize <= 0) {
             setCurrentState(new PassiveMachine(this));
-            if (this instanceof ZeroMachine && ((ZeroMachine)this).isOver())
-                cluster.setActive(false);
+            //System.out.println("Machine " + id + "DONE");
+            if (this instanceof ZeroMachine) {
+                if (((ZeroMachine)this).isOver())  {
+                    cluster.setActive(false);
+                }
+                cluster.setTokenSend(false);
+            }
+
+            if (token != null)
+                sendToken();
 
         }
         workingTime += (System.currentTimeMillis() - startTimeWorking);
@@ -173,8 +181,8 @@ public class Machine implements MachineState, Runnable {
     public void receiveToken(Token token) {
         this.token = token;
         currentState.receiveToken(token);
-        //System.err.println(id + " : Receive token " + token.getValue() + " " + token.getColor() + " step - " + token.steps.get());
-        //getCluster().noticeTokenSend(id);
+        //System.err.println(id + " : Receive token " + " id:" + token.getId() + " value: " + token.getValue() + " " + token.getColor() + " step - " + token.steps.get());
+        getCluster().noticeTokenSend(id);
     }
 
     public Token getToken() {

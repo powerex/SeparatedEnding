@@ -45,6 +45,7 @@ public class PassiveMachine implements MachineState  {
         machine.getToken().steps.incrementAndGet();
         machine.token.changeValue(machine.getBaseCounter());
         machine.getCluster().getMachines().get(machine.getId()-1).receiveToken(machine.token);
+        //System.err.println("\t\tSent to " + (machine.getId()-1));
         machine.setToken(null);
     }
 }

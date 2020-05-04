@@ -35,4 +35,5 @@ public class VisualModel extends Model {
         if (render != null && token != null)
             render.drawToken(token, i);
     }
+
 }

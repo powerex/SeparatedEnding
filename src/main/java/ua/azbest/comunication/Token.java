@@ -6,14 +6,21 @@ public class Token {
 
     //for debug
     public AtomicInteger steps;
+    private static long ID = 0;
 
     private int value;
     private Color color;
+    private long id;
 
     public Token() {
         steps = new AtomicInteger(0);
         value = 0;
         color = Color.WHITE;
+        id = ++ID;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Color getColor() {

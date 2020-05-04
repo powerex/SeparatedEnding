@@ -6,9 +6,11 @@ import ua.azbest.machine.ActiveMachine;
 import ua.azbest.machine.Machine;
 import ua.azbest.machine.ZeroMachine;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static java.lang.Thread.*;
@@ -21,6 +23,8 @@ public class Model implements Runnable {
     protected final List<Machine> machines;
     private final double TASK_SIZE = 200;
     private boolean active = false;
+    private AtomicBoolean tokenSend = new AtomicBoolean(false);
+    protected PrintStream printStream;
 
     private Thread pr;
 
@@ -31,6 +35,7 @@ public class Model implements Runnable {
         machines = Stream.generate(() -> new Machine(random.nextDouble(), this)).limit(clusterSize-1).collect(toCollection(ArrayList::new));
         machines.add(0, zeroMachine);
         channel = new Channel(this);
+        printStream = System.err;
     }
 
     public void startModeling() {
@@ -46,7 +51,7 @@ public class Model implements Runnable {
             e.printStackTrace();
         }
         ch.start();
-        getZeroMachine().sendToken();
+        //getZeroMachine().sendToken();
         pr.start();
     }
 
@@ -81,7 +86,7 @@ public class Model implements Runnable {
 
         long startTime = System.currentTimeMillis();
         while (active) {
-            //System.err.println("\t\t\t\t Left: " + getTaskLeft());
+            printStream.println("\t\t\t\t Left: " + getTaskLeft());
             try {
                 sleep(300);
             } catch (InterruptedException e) {
@@ -129,4 +134,15 @@ public class Model implements Runnable {
     public void noticeMachineSetPassive(int i) {}
     public void noticeTokenSend(int i) {}
 
+    public void setPrintStream(PrintStream printStream) {
+        this.printStream = printStream;
+    }
+
+    public synchronized boolean isTokenSend() {
+        return tokenSend.get();
+    }
+
+    public synchronized void setTokenSend(boolean tokenSend) {
+        this.tokenSend.lazySet(tokenSend);
+    }
 }

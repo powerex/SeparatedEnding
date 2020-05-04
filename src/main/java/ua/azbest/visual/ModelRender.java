@@ -83,8 +83,10 @@ public class ModelRender {
                 break;
         }
 
+        gc.fillOval(shiftX, shiftY, W / 4, W / 4);
 
-        gc.fillOval(shiftX, shiftY, W / 5, W / 5);
+        gc.setStroke(Color.BLUEVIOLET);
+        gc.strokeText(String.valueOf(token.getId()) + '(' + token.steps.incrementAndGet() + ')', shiftX, shiftY);
     }
 
 }
